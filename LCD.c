@@ -61,6 +61,21 @@ void writedatabyte(char databyte)
 	delayMilli();
 }
 
+void Write_to_LCD_4(char bytewantsend)
+{
+	
+}
+
+void set_ss_lo()
+{
+	P1OUT &= ~BIT3;
+}
+
+void set_ss_hi()
+{
+	P1OUT |= BIT3;
+}
+
 void Write_to_LCD_8(char bytewantsend)
 {
 	unsigned char sendbyte=bytewantsend;
