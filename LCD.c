@@ -69,34 +69,28 @@ void clearLCD();
 
 void movecursortolinetwo()
 {
-	LCDCON = 0x00;
-	
-	LCDSEND = 0xA8;
-	
-	Write_to_LCD_8();
-	
-	delayMicro();
-	
-	LCDCON = 0x40;
-	
-	delayMilli();	
-	
+	writeCommandByte(0xA8);
 }
 
 void movecursortolineone()
 {
-	LCDCON = 0x00;
+	writeCommandByte(0x80);
 	
-	LCDSEND = 0x01;
+}
+
+void writecharacter(char character)
+{
+	writedatabyte(character);
+}
+
+void writemessage(char * messagestring)
+{
+	char n=0;
 	
-	Write_to_LCD_8();
-	
-	delayMicro();
-	
-	LCDCON = 0x40;
-	
-	delayMilli();	
-	
+	for (n=0; n<=8; n++)
+	{
+		writecharacter(messagestring[n]);
+	}
 }
 
 void delayMilli()
