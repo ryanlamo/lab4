@@ -8,6 +8,33 @@
 #include "LCD.h"
 #define RS 0x40
 
+void initializeSPI()
+{
+	UCB0CTL1 |= UCSWRST;
+	
+	UCB0CTL0 |= UCMSB|UCMST|UCSYNC|UCCKPH;
+	
+	UCB0CTL1 |= UCSSEL1;
+	
+	UCB0STAT |= UCLISTEN;
+	
+	P1SEL |= BIT5;
+	
+	P1SEL2 |= BIT5;
+	
+	P1SEL |= BIT7;
+	
+	P1SEL2 |= BIT7;
+	
+	P1SEL |= BIT6;
+	
+	P1SEL2 |= BIT6;
+	
+	UCB0CTL1 &= ~UCSWRST|UCCKPL;
+	
+	P1DIR |= BIT3;
+}
+
 void initializeLCD()
 {
 	writecommandnibble(0x03);
@@ -83,13 +110,13 @@ void Write_to_LCD_4(char bytewantsend)
 	
 	Spi_send();
 	
-	dealyMicro();
+	delayMicro();
 	
 	sendbyte |= 0x80;
 	
 	Spi_send();
 	
-	dealyMicro();
+	delayMicro();
 	
 	sendbyte &= 0x7f;
 	
@@ -135,7 +162,7 @@ void SPI_send(char bytewantsend)
 	
 	UCB0TXBUF = bytewantsend;
 	
-	while(!(UCB0RXIFG & IFGs))
+	while(!(UCB0RXIFG & IFG2))
 	{
 		
 	}
