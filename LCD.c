@@ -177,34 +177,59 @@ void writemessage(char * messagestring)
 	}
 }
 
+char * printFromLocation(char * start, char * current)
+{
+	int i;
+
+	if (*current == 0)
+		current = start;
+
+	char * displayChar = current;
+
+	for (i = 0; i < 8; i++)
+	{
+		writecharacter(*displayChar);
+		displayChar++;
+		if (*displayChar == 0)
+			displayChar = start;
+	}
+
+	return current + 1;
+}
 
 void scrollmessage(char *messagestring1, char * messagestring2)
 {
 	char i=0;
-	char * string1 = messagestring1;
-	char * string2 = messagestring2;
+	char * current1 = messagestring1;
+	char * current2 = messagestring2;
 
 	while(1)
 	{
-		clearLCD();
-		if (*(string1+8)==0x00)
-			string1 = messagestring1;
-		if (*(string2+8)==0x00)
-			string2 = messagestring2;
 		movecursortolineone();
-		for (i=0; i<8; i++)
-			writecharacter(string1[i]);
+		current1 = printFromLocation(messagestring1, current1);
 		movecursortolinetwo();
-		for (i=0; i<8; i++)
-			writecharacter(string2[i]);
-
+		current2 = printFromLocation(messagestring2, current2);
 		delayTen();
-		string1++;
-		string2++;
 	}
 
 }
 
+/*
+if (*(string1+8)==0x00)
+	string1 = messagestring1;
+if (*(string2+8)==0x00)
+	string2 = messagestring2;
+movecursortolineone();
+for (i=0; i<8; i++)
+	writecharacter(string1[i]);
+movecursortolinetwo();
+for (i=0; i<8; i++)
+	writecharacter(string2[i]);
+
+delayTen();
+string1++;
+string2++;
+*/
 
 void initializeLCD()
 {
