@@ -67,6 +67,38 @@ void clearLCD();
 	writecommandbyte(1);
 }
 
+void movecursortolinetwo()
+{
+	LCDCON = 0x00;
+	
+	LCDSEND = 0xA8;
+	
+	Write_to_LCD_8();
+	
+	delayMicro();
+	
+	LCDCON = 0x40;
+	
+	delayMilli();	
+	
+}
+
+void movecursortolineone()
+{
+	LCDCON = 0x00;
+	
+	LCDSEND = 0x01;
+	
+	Write_to_LCD_8();
+	
+	delayMicro();
+	
+	LCDCON = 0x40;
+	
+	delayMilli();	
+	
+}
+
 void delayMilli()
 {
 	_delay_cycles(1809);
