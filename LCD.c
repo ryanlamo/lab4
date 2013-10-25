@@ -57,7 +57,7 @@ void delayMicro()
 
 void delayTen()
 {
-	_delay_cycles()
+	_delay_cycles(548005);
 }
 
 void SPI_send(char bytewantsend)
@@ -191,12 +191,14 @@ void scrollmessage(char *messagestring1, char * messagestring2)
 			string1 = messagestring1;
 		if (*(string2+8)==0x00)
 			string2 = messagestring2;
+		movecursortolineone();
 		for (i=0; i<8; i++)
 			writecharacter(string1[i]);
+		movecursortolinetwo();
 		for (i=0; i<8; i++)
 			writecharacter(string2[i]);
 
-		delayMilli();
+		delayTen();
 		string1++;
 		string2++;
 	}
