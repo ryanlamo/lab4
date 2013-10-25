@@ -167,14 +167,19 @@ void writecharacter(char character)
 	writedatabyte(character);
 }
 
-void writemessage(char * messagestring)
+void writemessage(char * messagestring1, char * messagestring2)
 {
 	char n=0;
-
+	movecursortolineone();
 	for (n=0; n<=8; n++)
 	{
-		writecharacter(messagestring[n]);
+		writecharacter(messagestring1[n]);
 	}
+	movecursortolinetwo();
+	for (n=0; n<=8; n++)
+		{
+			writecharacter(messagestring2[n]);
+		}
 }
 
 char * printFromLocation(char * start, char * current)

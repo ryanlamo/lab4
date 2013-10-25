@@ -26,7 +26,7 @@ void movecursortolineone();
 
 void writecharacter(char character);
 
-void writethemessage(char * messagestring);
+void writethemessage(char * messagestring1, char * messagestring2);
 
 void scrollmessage(char * messagestring1, char * messagestring2);
 
