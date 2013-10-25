@@ -18,6 +18,7 @@ int main(void) {
     initializeLCD();
     clearLCD();
     writemessage(string);
+    scrollmessage(string, string2);
     
     while (1)
     {

@@ -55,6 +55,11 @@ void delayMicro()
 	_delay_cycles(45);
 }
 
+void delayTen()
+{
+	_delay_cycles()
+}
+
 void SPI_send(char bytewantsend)
 {
 	volatile char readbyte;
@@ -170,6 +175,32 @@ void writemessage(char * messagestring)
 	{
 		writecharacter(messagestring[n]);
 	}
+}
+
+
+void scrollmessage(char *messagestring1, char * messagestring2)
+{
+	char i=0;
+	char * string1 = messagestring1;
+	char * string2 = messagestring2;
+
+	while(1)
+	{
+		clearLCD();
+		if (*(string1+8)==0x00)
+			string1 = messagestring1;
+		if (*(string2+8)==0x00)
+			string2 = messagestring2;
+		for (i=0; i<8; i++)
+			writecharacter(string1[i]);
+		for (i=0; i<8; i++)
+			writecharacter(string2[i]);
+
+		delayMilli();
+		string1++;
+		string2++;
+	}
+
 }
 
 
