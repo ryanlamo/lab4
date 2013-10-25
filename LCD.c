@@ -40,6 +40,16 @@ void clearLCD();
 	writecommandbyte(1);
 }
 
+void delayMilli()
+{
+	_delay_cycles(1809);
+}
+
+void delayMicro()
+{
+	_delay_cycles(45);
+}
+
 void writecommandnibble(char commandnibble)
 {
 	LCDCON &= ~RS;
@@ -63,6 +73,29 @@ void writedatabyte(char databyte)
 
 void Write_to_LCD_4(char bytewantsend)
 {
+	unsigned char sendbyte=bytewantsend;
+	
+	sendbyte &= 0x0F;
+	
+	sendbyte |= LCDCON;
+	
+	sendbyte &=0x7F;
+	
+	Spi_send();
+	
+	dealyMicro();
+	
+	sendbyte |= 0x80;
+	
+	Spi_send();
+	
+	dealyMicro();
+	
+	sendbyte &= 0x7f;
+	
+	Spi_send();
+	
+	delayMicro();
 	
 }
 
@@ -75,6 +108,7 @@ void set_ss_hi()
 {
 	P1OUT |= BIT3;
 }
+
 
 void Write_to_LCD_8(char bytewantsend)
 {
