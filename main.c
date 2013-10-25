@@ -10,6 +10,19 @@
 
 int main(void) {
     WDTCTL = WDTPW | WDTHOLD;
+    
+    char * string ="ECE 382 is my favorite class";
+    char string2[] ="Last name ever, first name greatest";
+    
+    initializeSPI();
+    initializeLCD();
+    clearLCD();
+    writemessage(string);
+    
+    while (1)
+    {
+    	
+    }
 	
 	return 0;
 }

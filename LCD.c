@@ -4,93 +4,45 @@
  *  Created on: Oct 23, 2013
  *      Author: C14Ryan.Lamo
  */
-
+#include <msp430.h>
 #include "LCD.h"
 #define RS 0x40
+char LCDCON = 0;
+
+void set_ss_hi()
+{
+	P1OUT |= BIT3;
+}
 
 void initializeSPI()
 {
+	P1DIR |= BIT3;
+
+	set_ss_hi();
+
 	UCB0CTL1 |= UCSWRST;
 	
 	UCB0CTL0 |= UCMSB|UCMST|UCSYNC|UCCKPH;
 	
 	UCB0CTL1 |= UCSSEL1;
 	
-	UCB0STAT |= UCLISTEN;
-	
 	P1SEL |= BIT5;
-	
 	P1SEL2 |= BIT5;
 	
 	P1SEL |= BIT7;
-	
 	P1SEL2 |= BIT7;
 	
 	P1SEL |= BIT6;
-	
 	P1SEL2 |= BIT6;
 	
-	UCB0CTL1 &= ~UCSWRST|UCCKPL;
-	
-	P1DIR |= BIT3;
-}
-
-void initializeLCD()
-{
-	writecommandnibble(0x03);
-	
-	writecommandnibble(0x03);
-	
-	writecommandnibble(0x03);
-	
-	writecommandnibble(0x02);
-	
-	writecommandbyte(0x28);
-	
-	writecommandbyte(0x0c);
-	
-	writecommandbyte(0x01);
-	
-	writecommandbyte(0x06);
-	
-	writecommandbyte(0x01);
-	
-	writecommandbyte(0x02);
-	
-	SPI_send(0);
-	delayMicro();
+	UCB0CTL1 &= ~UCSWRST;
 }
 
 
-void clearLCD();
-{
-	writecommandbyte(1);
-}
 
-void movecursortolinetwo()
+void set_ss_lo()
 {
-	writeCommandByte(0xA8);
-}
-
-void movecursortolineone()
-{
-	writeCommandByte(0x80);
-	
-}
-
-void writecharacter(char character)
-{
-	writedatabyte(character);
-}
-
-void writemessage(char * messagestring)
-{
-	char n=0;
-	
-	for (n=0; n<=8; n++)
-	{
-		writecharacter(messagestring[n]);
-	}
+	P1OUT &= ~BIT3;
 }
 
 void delayMilli()
@@ -101,6 +53,69 @@ void delayMilli()
 void delayMicro()
 {
 	_delay_cycles(45);
+}
+
+void SPI_send(char bytewantsend)
+{
+	volatile char readbyte;
+
+	set_ss_lo();
+
+	UCB0TXBUF = bytewantsend;
+
+	while(!(UCB0RXIFG & IFG2))
+	{
+
+	}
+
+	readbyte = UCB0RXBUF;
+
+	set_ss_hi();
+}
+
+void Write_to_LCD_4(char bytewantsend)
+{
+	unsigned char sendbyte=bytewantsend;
+	
+	sendbyte &= 0x0F;
+	
+	sendbyte |= LCDCON;
+	
+	sendbyte &=0x7F;
+	
+	SPI_send(sendbyte);
+	
+	delayMicro();
+	
+	sendbyte |= 0x80;
+	
+	SPI_send(sendbyte);
+	
+	delayMicro();
+	
+	sendbyte &= 0x7f;
+	
+	SPI_send(sendbyte);
+	
+	delayMicro();
+	
+}
+
+void Write_to_LCD_8(char bytewantsend)
+{
+	unsigned char sendbyte=bytewantsend;
+
+	sendbyte &= 0xF0;
+
+	sendbyte = sendbyte >>4;
+
+	Write_to_LCD_4(sendbyte);
+
+	sendbyte = bytewantsend;
+
+	sendbyte &= 0x0F;
+
+	Write_to_LCD_4(sendbyte);
 }
 
 void writecommandnibble(char commandnibble)
@@ -124,81 +139,65 @@ void writedatabyte(char databyte)
 	delayMilli();
 }
 
-void Write_to_LCD_4(char bytewantsend)
+
+
+void clearLCD()
 {
-	unsigned char sendbyte=bytewantsend;
-	
-	sendbyte &= 0x0F;
-	
-	sendbyte |= LCDCON;
-	
-	sendbyte &=0x7F;
-	
-	Spi_send();
-	
-	delayMicro();
-	
-	sendbyte |= 0x80;
-	
-	Spi_send();
-	
-	delayMicro();
-	
-	sendbyte &= 0x7f;
-	
-	Spi_send();
-	
-	delayMicro();
-	
+	writecommandbyte(1);
 }
 
-void set_ss_lo()
+void movecursortolinetwo()
 {
-	P1OUT &= ~BIT3;
+	writecommandbyte(0xA8);
 }
 
-void set_ss_hi()
+void movecursortolineone()
 {
-	P1OUT |= BIT3;
+	writecommandbyte(0x80);
+
 }
 
-
-void Write_to_LCD_8(char bytewantsend)
+void writecharacter(char character)
 {
-	unsigned char sendbyte=bytewantsend;
-	
-	sendbyte &= 0xF0;
-	
-	sendbyte = sendbyte >>4;
-	
-	Write_to_LCD_4(sendbyte);
-	
-	sendbyte = bytewantsend;
-	
-	sendbyte &= 0xF0;
-	
-	Write_to_LCD_4(sendbyte);
+	writedatabyte(character);
 }
 
-void SPI_send(char bytewantsend)
+void writemessage(char * messagestring)
 {
-	char readbyte;
-	
-	set_ss_lo();
-	
-	UCB0TXBUF = bytewantsend;
-	
-	while(!(UCB0RXIFG & IFG2))
+	char n=0;
+
+	for (n=0; n<=8; n++)
 	{
-		
+		writecharacter(messagestring[n]);
 	}
-	
-	readbyte = UCB0RXBUF;
-	
-	set_ss_hi();
 }
 
 
+void initializeLCD()
+{
+	writecommandnibble(0x03);
+
+	writecommandnibble(0x03);
+
+	writecommandnibble(0x03);
+
+	writecommandnibble(0x02);
+
+	writecommandbyte(0x28);
+
+	writecommandbyte(0x0c);
+
+	writecommandbyte(0x01);
+
+	writecommandbyte(0x06);
+
+	writecommandbyte(0x01);
+
+	writecommandbyte(0x02);
+
+	SPI_send(0);
+	delayMicro();
+}
 
 
 

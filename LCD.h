@@ -16,6 +16,10 @@ void initializeLCD();
 
 void clearLCD();
 
+void delayMilli();
+
+void delayMicro();
+
 void movecursortolinetwo();
 
 void movecursortolineone();
