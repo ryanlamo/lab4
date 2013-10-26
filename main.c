@@ -1,8 +1,13 @@
 /* Author: C1C Ryan Lamo
  * Created: 23 October 2013
- * Last Edited: 23 October 2013
+ * Last Edited: 25 October 2013
  * Description: This program will act as a device driver for the LCD.
- * Requires LCD.h and LCD.c to be included.
+ * Requires LCD.h and button.h to be included.
+ * Documentation: Capt Branchflower helepd me with a lot of the coding.
+ * He explained how many functions needed to operate, specifically the write_to_LCD_4
+ * function and the initializeSPI function. Additionally, he helped re-work my scroll message
+ * function by creating two functions, one that took in the message to scroll, and the other
+ * that did the heavy work of actually scrolling.
  */
 
 #include <msp430.h> 
@@ -25,6 +30,12 @@ int main(void) {
     initializeLCD();
     clearLCD();
     writemessage(messageline1, messageline2);
+
+/*This portion of the code utilizes Capt Branchflower's
+ * button.h and button.c files to interface the chip with
+ * the push buttons.
+ */
+
 
     configureP1PinAsButton(BIT1|BIT2|BIT4);
     char buttons[]={BIT1, BIT2, BIT4};

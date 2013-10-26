@@ -9,10 +9,21 @@
 #define RS 0x40
 char LCDCON = 0;
 
+/*Function: set_ss_hi
+ * Author: C1C Ryan Lamo
+ * Description: Sets the slave select Hi
+ */
+
 void set_ss_hi()
 {
 	P1OUT |= BIT3;
 }
+
+/*Function: initializeSPI
+ * Author: C1C Ryan Lamo
+ * Description: Sets the pins on the chip to properly interact with
+ * the Geek Box. Sets up pins for MISO and MOSI.
+ */
 
 void initializeSPI()
 {
@@ -39,26 +50,47 @@ void initializeSPI()
 }
 
 
-
+/*Function: set_ss_lo
+ * Author: C1C Ryan Lamo
+ * Description: Sets the slave select Lo
+ */
 void set_ss_lo()
 {
 	P1OUT &= ~BIT3;
 }
+
+/*Function: delayMilli
+ * Author: C1C Ryan Lamo
+ * Description: Sets a delay of 1.65 milliseconds.
+ */
 
 void delayMilli()
 {
 	_delay_cycles(1809);
 }
 
+/*Function: delayMicro
+ * Author: C1C Ryan Lamo
+ * Description: Sets a delay of 45 microseconds.
+ */
 void delayMicro()
 {
 	_delay_cycles(45);
 }
 
+/*Function: delayTen
+ * Author: C1C Ryan Lamo
+ * Description: Sets a delay of 0.5 seconds.
+ */
 void delayTen()
 {
 	_delay_cycles(548005);
 }
+
+/*Function: SPI_send
+ * Author: Capt Branchflower
+ * Description: Enables chip to send bytes via SPI
+ */
 
 void SPI_send(char bytewantsend)
 {
@@ -77,6 +109,11 @@ void SPI_send(char bytewantsend)
 
 	set_ss_hi();
 }
+
+/*Function: Write_to_LCD_4
+ * Author: C1C Ryan Lamo
+ * Description: Writes a bit to the LCD
+ */
 
 void Write_to_LCD_4(char bytewantsend)
 {
@@ -106,6 +143,11 @@ void Write_to_LCD_4(char bytewantsend)
 	
 }
 
+/*Function: Write_to_LCD_8
+ * Author: C1C Ryan Lamo
+ * Description: Sends a byte to be printed to LCD.
+ */
+
 void Write_to_LCD_8(char bytewantsend)
 {
 	unsigned char sendbyte=bytewantsend;
@@ -123,12 +165,22 @@ void Write_to_LCD_8(char bytewantsend)
 	Write_to_LCD_4(sendbyte);
 }
 
+/*Function: writecommandnibble
+ * Author: Capt Branchflower
+ * Description: Writes a command, in bit form, to the LCD
+ */
+
 void writecommandnibble(char commandnibble)
 {
 	LCDCON &= ~RS;
 	Write_to_LCD_4(commandnibble);
 	delayMilli();
 }
+
+/*Function: writecommandbyte
+ * Author: Capt Branchflower
+ * Description: Writes a command, in byte length, to the LCD
+ */
 
 void writecommandbyte(char commandbyte)
 {
@@ -137,6 +189,11 @@ void writecommandbyte(char commandbyte)
 	delayMilli();
 }
 
+/*Function: writedatabyte
+ * Author: Capt Branchflower
+ * Description: Writes data to the LCD, in byte length.
+ */
+
 void writedatabyte(char databyte)
 {
 	LCDCON |= RS;
@@ -144,17 +201,32 @@ void writedatabyte(char databyte)
 	delayMilli();
 }
 
-
+/*Function: clearLCD
+ * Author: Capt Branchflower
+ * Description: Clears the LCD.
+ */
 
 void clearLCD()
 {
 	writecommandbyte(1);
 }
 
+/*Function: movecursortolinetwo
+ * Author: C1C Ryan Lamo
+ * Description: Gives command to LCD to move cursor position to
+ * second line
+ */
+
 void movecursortolinetwo()
 {
 	writecommandbyte(0xA8);
 }
+
+/*Function: movecursortolineone
+ * Author: C1C Ryan Lamo
+ * Description: Gives command to LCD to move cursor position to
+ * first line
+ */
 
 void movecursortolineone()
 {
@@ -162,10 +234,20 @@ void movecursortolineone()
 
 }
 
+/*Function: writecharacter
+ * Author: C1C Ryan Lamo
+ * Description: Takes a single character to be written to LCD
+ */
+
 void writecharacter(char character)
 {
 	writedatabyte(character);
 }
+
+/*Function: writemessage
+ * Author: C1C Ryan Lamo
+ * Description: Takes an entire message string to be written to LCD
+ */
 
 void writemessage(char * messagestring1, char * messagestring2)
 {
@@ -181,6 +263,12 @@ void writemessage(char * messagestring1, char * messagestring2)
 			writecharacter(messagestring2[n]);
 		}
 }
+
+/*Function: printFromLocation
+ * Author: C1C Ryan Lamo/Capt Branchflower
+ * Description: Stores start location and current location of a message string
+ * to allow for scrolling.
+ */
 
 char * printFromLocation(char * start, char * current)
 {
@@ -202,6 +290,11 @@ char * printFromLocation(char * start, char * current)
 	return current + 1;
 }
 
+/*Function: scrollmessage
+ * Author: C1C Ryan Lamo/Capt Branchflower
+ * Description: Scrolls message across LCD for both line one and two.
+ */
+
 void scrollmessage(char *messagestring1, char * messagestring2)
 {
 	char i=0;
@@ -219,22 +312,11 @@ void scrollmessage(char *messagestring1, char * messagestring2)
 
 }
 
-/*
-if (*(string1+8)==0x00)
-	string1 = messagestring1;
-if (*(string2+8)==0x00)
-	string2 = messagestring2;
-movecursortolineone();
-for (i=0; i<8; i++)
-	writecharacter(string1[i]);
-movecursortolinetwo();
-for (i=0; i<8; i++)
-	writecharacter(string2[i]);
+/*Function: initializeLCD
+ * Author: Capt Branchflower
+ * Description: Initializes the LCD for use by the program.
+ */
 
-delayTen();
-string1++;
-string2++;
-*/
 
 void initializeLCD()
 {

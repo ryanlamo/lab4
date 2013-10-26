@@ -1,8 +1,6 @@
 /*
- * LCD.h
- *
- *  Created on: Oct 23, 2013
- *      Author: C14Ryan.Lamo
+ * Created on: Oct 23, 2013
+ * Author: C14Ryan.Lamo
  * Description: Header file used to implement interaction
  * 				with geek box LCD.
  */
